@@ -26,6 +26,111 @@
       overflow-x: hidden;
     }
 
+    /* ── FOUNDERS ── */
+    .founders-section {
+      padding: 6rem 6%;
+      text-align: center;
+      position: relative;
+    }
+    .founders-grid {
+      display: flex;
+      gap: 2.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 3rem;
+    }
+    .founder-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(124,58,237,0.2);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      max-width: 420px;
+      text-align: left;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .founder-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(124,58,237,0.6);
+      box-shadow: 0 20px 60px rgba(124,58,237,0.2);
+    }
+    .founder-img-wrap {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 1.5rem;
+    }
+    .founder-img-wrap img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: top;
+      border: 3px solid transparent;
+      background: linear-gradient(#0a0a0f, #0a0a0f) padding-box,
+                  linear-gradient(135deg, #7c3aed, #06b6d4) border-box;
+    }
+    .founder-glow {
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      opacity: 0.2;
+      filter: blur(12px);
+      z-index: -1;
+    }
+    .founder-info h3 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 0.3rem;
+    }
+    .founder-role {
+      display: block;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.2rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .founder-info p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    .founder-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .founder-contact {
+      display: block;
+      text-align: center;
+      margin-top: 1.2rem;
+      font-size: 0.85rem;
+      color: #06b6d4;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .founder-contact:hover { color: #7c3aed; }
+
+    .founder-tags span {
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid rgba(124,58,237,0.35);
+      background: rgba(124,58,237,0.08);
+      color: #a78bfa;
+    }
+
     /* ── NAVBAR ── */
     nav {
       position: fixed; top: 0; width: 100%; z-index: 100;
@@ -314,6 +419,7 @@
     <ul class="nav-links">
       <li><a href="#features">Features</a></li>
       <li><a href="#showcase">Showcase</a></li>
+      <li><a href="#founders">Team</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
     <a href="#contact" class="nav-cta">Get Early Access</a>
@@ -344,17 +450,17 @@
 
     <div class="hero-images">
       <div class="hero-img-card">
-        <img src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" alt="AI Brain"/>
+        <img src="https://inferiq.cloud/img-neural.svg" alt="AI Brain"/>
         <div class="img-overlay"></div>
         <div class="img-label">Neural AI</div>
       </div>
       <div class="hero-img-card">
-        <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&q=80" alt="Robotics"/>
+        <img src="https://inferiq.cloud/img-robotics.png" alt="Robotics"/>
         <div class="img-overlay"></div>
         <div class="img-label">Robotics</div>
       </div>
       <div class="hero-img-card">
-        <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80" alt="AI Technology"/>
+        <img src="https://inferiq.cloud/img-analytics.svg" alt="AI Technology"/>
         <div class="img-overlay"></div>
         <div class="img-label">Deep Learning</div>
       </div>
@@ -368,6 +474,52 @@
     <div class="stat"><div class="stat-num">500+</div><div class="stat-label">AI Models</div></div>
     <div class="stat"><div class="stat-num">50ms</div><div class="stat-label">Avg Latency</div></div>
   </div>
+
+  <!-- FOUNDERS -->
+  <section class="founders-section" id="founders">
+    <div class="section-label">The Visionaries</div>
+    <h2 class="section-title">Meet the Co-Founders</h2>
+    <p class="section-sub">The brilliant minds behind InferiQ — passionate about pushing the boundaries of artificial intelligence.</p>
+    <div class="founders-grid">
+
+      <div class="founder-card">
+        <div class="founder-img-wrap">
+          <img src="https://inferiq.cloud/pankaj.png" alt="Pankaj Mahato"/>
+          <div class="founder-glow"></div>
+        </div>
+        <div class="founder-info">
+          <h3>Pankaj Mahato</h3>
+          <span class="founder-role">Co-Founder &amp; CEO</span>
+          <p>A visionary technologist and strategic architect, Pankaj drives the product vision and engineering excellence at InferiQ. With a deep passion for distributed systems and AI infrastructure, he transforms complex challenges into elegant intelligent solutions that redefine what machines can do.</p>
+          <div class="founder-tags">
+            <span>AI Architecture</span>
+            <span>Product Vision</span>
+            <span>Engineering</span>
+          </div>
+          <a href="mailto:pankaj@inferiq.cloud" class="founder-contact">pankaj@inferiq.cloud</a>
+        </div>
+      </div>
+
+      <div class="founder-card">
+        <div class="founder-img-wrap">
+          <img src="https://inferiq.cloud/dalima.png" alt="Dalima Mahato"/>
+          <div class="founder-glow"></div>
+        </div>
+        <div class="founder-info">
+          <h3>Dalima Mahato</h3>
+          <span class="founder-role">Co-Founder &amp; CTO</span>
+          <p>A trailblazing engineer and ML pioneer, Dalima leads the research and technology frontier at InferiQ. Her expertise spans machine learning, neural architecture design, and real-time AI systems. She is the driving force behind InferiQ's most innovative breakthroughs.</p>
+          <div class="founder-tags">
+            <span>Machine Learning</span>
+            <span>Neural Networks</span>
+            <span>Research</span>
+          </div>
+          <a href="mailto:dalima@inferiq.cloud" class="founder-contact">dalima@inferiq.cloud</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
 
   <!-- FEATURES -->
   <section class="section" id="features">
@@ -417,21 +569,21 @@
 
     <div class="showcase-grid">
       <div class="showcase-card large">
-        <img src="https://images.unsplash.com/photo-1555255707-c07966088b7b?w=800&q=80" alt="AI Robot"/>
+        <img src="https://inferiq.cloud/img-robotics.png" alt="AI Robot"/>
         <div class="card-text">
           <h4>Humanoid Robotics</h4>
           <p>Advanced AI-powered humanoid systems</p>
         </div>
       </div>
       <div class="showcase-card">
-        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80" alt="Data Analytics"/>
+        <img src="https://inferiq.cloud/img-analytics.svg" alt="Data Analytics"/>
         <div class="card-text">
           <h4>AI Analytics Dashboard</h4>
           <p>Real-time intelligence at scale</p>
         </div>
       </div>
       <div class="showcase-card">
-        <img src="https://images.unsplash.com/photo-1507146153580-69a1fe6d8aa1?w=600&q=80" alt="Neural Network"/>
+        <img src="https://inferiq.cloud/img-neural.svg" alt="Neural Network"/>
         <div class="card-text">
           <h4>Neural Networks</h4>
           <p>Deep learning at the frontier</p>
@@ -440,7 +592,7 @@
     </div>
   </section>
 
-  <!-- CTA -->
+    <!-- CTA -->
   <section class="cta-section" id="contact">
     <div class="orb orb1" style="opacity:0.1;"></div>
     <div class="cta-box">

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <defs>
+    <radialGradient id="bg2" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#0a0a1f"/>
+      <stop offset="100%" stop-color="#050508"/>
+    </radialGradient>
+    <linearGradient id="barGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="600" height="600" fill="url(#bg2)"/>
+  <!-- Grid -->
+  <g stroke="#7c3aed" stroke-opacity="0.06" stroke-width="1">
+    <line x1="0" y1="100" x2="600" y2="100"/><line x1="0" y1="200" x2="600" y2="200"/>
+    <line x1="0" y1="300" x2="600" y2="300"/><line x1="0" y1="400" x2="600" y2="400"/>
+    <line x1="0" y1="500" x2="600" y2="500"/>
+    <line x1="100" y1="0" x2="100" y2="600"/><line x1="200" y1="0" x2="200" y2="600"/>
+    <line x1="300" y1="0" x2="300" y2="600"/><line x1="400" y1="0" x2="400" y2="600"/>
+    <line x1="500" y1="0" x2="500" y2="600"/>
+  </g>
+  <!-- Dashboard card -->
+  <rect x="40" y="40" width="520" height="520" rx="20" fill="#0d0d1a" stroke="#7c3aed" stroke-width="1" stroke-opacity="0.3"/>
+  <!-- Header bar -->
+  <rect x="40" y="40" width="520" height="50" rx="20" fill="#7c3aed" opacity="0.15"/>
+  <rect x="40" y="70" width="520" height="20" fill="#7c3aed" opacity="0.15"/>
+  <circle cx="70" cy="65" r="8" fill="#7c3aed" opacity="0.6"/>
+  <circle cx="95" cy="65" r="8" fill="#06b6d4" opacity="0.6"/>
+  <circle cx="120" cy="65" r="8" fill="#a855f7" opacity="0.6"/>
+  <text x="300" y="70" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" fill="#e2e8f0" opacity="0.8">AI Analytics Dashboard — Real-time</text>
+  <!-- KPI cards -->
+  <rect x="60" y="110" width="140" height="70" rx="12" fill="#7c3aed" opacity="0.15" stroke="#7c3aed" stroke-width="1" stroke-opacity="0.3"/>
+  <text x="130" y="138" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#94a3b8">Inference/sec</text>
+  <text x="130" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="700" fill="#06b6d4" filter="url(#glow)">2.4M</text>
+  <rect x="230" y="110" width="140" height="70" rx="12" fill="#06b6d4" opacity="0.1" stroke="#06b6d4" stroke-width="1" stroke-opacity="0.3"/>
+  <text x="300" y="138" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#94a3b8">Accuracy</text>
+  <text x="300" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="700" fill="#7c3aed" filter="url(#glow)">99.7%</text>
+  <rect x="400" y="110" width="140" height="70" rx="12" fill="#a855f7" opacity="0.1" stroke="#a855f7" stroke-width="1" stroke-opacity="0.3"/>
+  <text x="470" y="138" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#94a3b8">Latency</text>
+  <text x="470" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="700" fill="#a855f7" filter="url(#glow)">1.2ms</text>
+  <!-- Bar chart -->
+  <text x="60" y="215" font-family="Inter,sans-serif" font-size="11" fill="#94a3b8">Model Performance</text>
+  <rect x="60" y="240" width="480" height="1" fill="#7c3aed" opacity="0.2"/>
+  <!-- Bars -->
+  <rect x="80" y="310" width="40" height="90" rx="6" fill="url(#barGrad)" opacity="0.85"/>
+  <rect x="150" y="280" width="40" height="120" rx="6" fill="url(#barGrad)" opacity="0.75"/>
+  <rect x="220" y="250" width="40" height="150" rx="6" fill="url(#barGrad)" opacity="0.9"/>
+  <rect x="290" y="295" width="40" height="105" rx="6" fill="url(#barGrad)" opacity="0.7"/>
+  <rect x="360" y="265" width="40" height="135" rx="6" fill="url(#barGrad)" opacity="0.85"/>
+  <rect x="430" y="240" width="40" height="160" rx="6" fill="url(#barGrad)" opacity="1"/>
+  <!-- Bar labels -->
+  <text x="100" y="415" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#94a3b8">GPT</text>
+  <text x="170" y="415" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#94a3b8">BERT</text>
+  <text x="240" y="415" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#94a3b8">LLAMA</text>
+  <text x="310" y="415" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#94a3b8">T5</text>
+  <text x="380" y="415" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#94a3b8">FALCON</text>
+  <text x="450" y="415" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#94a3b8">INFERIQ</text>
+  <!-- Line chart -->
+  <text x="60" y="450" font-family="Inter,sans-serif" font-size="11" fill="#94a3b8">Real-time Throughput</text>
+  <polyline points="60,510 130,495 200,500 270,480 340,475 410,460 480,450 540,435" fill="none" stroke="url(#lineGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+  <polyline points="60,510 130,495 200,500 270,480 340,475 410,460 480,450 540,435" fill="none" stroke="url(#lineGrad)" stroke-width="8" stroke-opacity="0.15"/>
+  <circle cx="540" cy="435" r="5" fill="#06b6d4" filter="url(#glow)"/>
+</svg>
