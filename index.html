@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>InferiQ — AI Powered Intelligence</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #7c3aed;
+      --accent: #06b6d4;
+      --dark: #0a0a0f;
+      --darker: #050508;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      padding: 1.2rem 6%;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(124,58,237,0.15);
+    }
+    .logo {
+      font-size: 1.6rem; font-weight: 900; letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      padding: 0.5rem 1.4rem; border-radius: 999px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      color: #fff; font-weight: 600; font-size: 0.85rem;
+      text-decoration: none; transition: opacity 0.3s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center;
+      padding: 8rem 6% 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated gradient orbs */
+    .orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); opacity: 0.25; pointer-events: none;
+      animation: float 8s ease-in-out infinite;
+    }
+    .orb1 { width: 500px; height: 500px; background: #7c3aed; top: -100px; left: -100px; }
+    .orb2 { width: 400px; height: 400px; background: #06b6d4; bottom: -80px; right: -80px; animation-delay: -4s; }
+    .orb3 { width: 300px; height: 300px; background: #a855f7; top: 50%; left: 50%; transform: translate(-50%,-50%); animation-delay: -2s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-30px) scale(1.05); }
+    }
+
+    /* Grid overlay */
+    .grid-overlay {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(124,58,237,0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,58,237,0.07) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.4rem 1rem; border-radius: 999px;
+      border: 1px solid rgba(124,58,237,0.4);
+      background: rgba(124,58,237,0.1);
+      font-size: 0.8rem; color: #a78bfa;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.6s ease forwards;
+    }
+    .badge span { width: 6px; height: 6px; border-radius: 50%; background: #06b6d4; display: inline-block; animation: pulse 2s infinite; }
+
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+    h1 {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 900; line-height: 1.05;
+      letter-spacing: -2px;
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+    h1 .gradient {
+      background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 50%, #a855f7 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .hero-sub {
+      margin-top: 1.5rem;
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--muted); max-width: 600px;
+      line-height: 1.7;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+
+    .hero-btns {
+      margin-top: 2.5rem;
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+    .btn-primary {
+      padding: 0.85rem 2rem; border-radius: 999px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      color: #fff; font-weight: 700; font-size: 1rem;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 30px rgba(124,58,237,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(124,58,237,0.6); }
+    .btn-ghost {
+      padding: 0.85rem 2rem; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--text); font-weight: 600; font-size: 1rem;
+      text-decoration: none; cursor: pointer; background: transparent;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .btn-ghost:hover { border-color: #7c3aed; background: rgba(124,58,237,0.1); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── HERO IMAGES ── */
+    .hero-images {
+      margin-top: 4rem;
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1rem; max-width: 900px; width: 100%;
+      animation: fadeUp 0.7s 0.4s ease both;
+    }
+    .hero-img-card {
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid rgba(124,58,237,0.2);
+      position: relative;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .hero-img-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(124,58,237,0.3);
+    }
+    .hero-img-card img { width: 100%; height: 200px; object-fit: cover; display: block; }
+    .hero-img-card .img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,10,15,0.7), transparent);
+    }
+    .hero-img-card .img-label {
+      position: absolute; bottom: 0.75rem; left: 0.75rem;
+      font-size: 0.75rem; font-weight: 600; color: #fff;
+      background: rgba(124,58,237,0.7); padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+    }
+
+    /* ── STATS ── */
+    .stats {
+      display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;
+      padding: 3rem 6%;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-size: 2.2rem; font-weight: 900;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .stat-label { font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem; }
+
+    /* ── FEATURES ── */
+    .section { padding: 6rem 6%; }
+    .section-label {
+      text-align: center; font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: #7c3aed; margin-bottom: 1rem;
+    }
+    .section-title {
+      text-align: center; font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800; letter-spacing: -1px; margin-bottom: 1rem;
+    }
+    .section-sub {
+      text-align: center; color: var(--muted); max-width: 500px;
+      margin: 0 auto 3.5rem; line-height: 1.7;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem; max-width: 1100px; margin: 0 auto;
+    }
+    .feature-card {
+      padding: 2rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.02);
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+    .feature-card:hover {
+      border-color: rgba(124,58,237,0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(124,58,237,0.1);
+    }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 1.2rem;
+      border: 1px solid rgba(124,58,237,0.2);
+    }
+    .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem; }
+    .feature-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── SHOWCASE IMAGES ── */
+    .showcase { padding: 4rem 6%; background: rgba(255,255,255,0.01); }
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 1rem; max-width: 1000px; margin: 0 auto;
+    }
+    .showcase-card {
+      border-radius: 20px; overflow: hidden;
+      border: 1px solid rgba(124,58,237,0.15);
+      position: relative;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .showcase-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 24px 60px rgba(124,58,237,0.25);
+    }
+    .showcase-card.large { grid-row: span 2; }
+    .showcase-card img { width: 100%; height: 100%; object-fit: cover; display: block; min-height: 200px; }
+    .showcase-card .card-text {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 1.5rem;
+      background: linear-gradient(to top, rgba(5,5,8,0.95), transparent);
+    }
+    .showcase-card .card-text h4 { font-size: 1rem; font-weight: 700; }
+    .showcase-card .card-text p { font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem; }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: 6rem 6%; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-box {
+      max-width: 700px; margin: 0 auto;
+      padding: 4rem;
+      border-radius: 28px;
+      border: 1px solid rgba(124,58,237,0.3);
+      background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(6,182,212,0.05));
+      position: relative;
+    }
+    .cta-box h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -1px; margin-bottom: 1rem; }
+    .cta-box p { color: var(--muted); margin-bottom: 2rem; line-height: 1.7; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 2rem 6%;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    footer .logo { font-size: 1.2rem; }
+    footer p { font-size: 0.8rem; color: var(--muted); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { font-size: 0.8rem; color: var(--muted); text-decoration: none; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--text); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .hero-images { grid-template-columns: 1fr; }
+      .showcase-grid { grid-template-columns: 1fr; }
+      .showcase-card.large { grid-row: span 1; }
+      .nav-links { display: none; }
+      .stats { gap: 2rem; }
+      .cta-box { padding: 2.5rem 1.5rem; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="logo">InferiQ</div>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#showcase">Showcase</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Get Early Access</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="badge"><span></span> Next-Generation AI Platform</div>
+
+    <h1>
+      Intelligence<br/>
+      <span class="gradient">Redefined by AI</span>
+    </h1>
+
+    <p class="hero-sub">
+      InferiQ harnesses cutting-edge artificial intelligence and robotics to transform how businesses operate, automate, and evolve.
+    </p>
+
+    <div class="hero-btns">
+      <a href="#contact" class="btn-primary">Get Early Access</a>
+      <a href="#features" class="btn-ghost">Explore Features</a>
+    </div>
+
+    <div class="hero-images">
+      <div class="hero-img-card">
+        <img src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" alt="AI Brain"/>
+        <div class="img-overlay"></div>
+        <div class="img-label">Neural AI</div>
+      </div>
+      <div class="hero-img-card">
+        <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&q=80" alt="Robotics"/>
+        <div class="img-overlay"></div>
+        <div class="img-label">Robotics</div>
+      </div>
+      <div class="hero-img-card">
+        <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80" alt="AI Technology"/>
+        <div class="img-overlay"></div>
+        <div class="img-label">Deep Learning</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat"><div class="stat-num">99.9%</div><div class="stat-label">Uptime SLA</div></div>
+    <div class="stat"><div class="stat-num">10x</div><div class="stat-label">Faster Inference</div></div>
+    <div class="stat"><div class="stat-num">500+</div><div class="stat-label">AI Models</div></div>
+    <div class="stat"><div class="stat-num">50ms</div><div class="stat-label">Avg Latency</div></div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <div class="section-label">What We Do</div>
+    <h2 class="section-title">Built for the AI Era</h2>
+    <p class="section-sub">From intelligent automation to advanced robotics, InferiQ delivers enterprise-grade AI that scales.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <h3>Neural Inference Engine</h3>
+        <p>Run large language models and vision models at blazing speed with our optimized inference infrastructure.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>Robotic Process Automation</h3>
+        <p>Deploy intelligent robots that learn, adapt, and operate autonomously across complex environments.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Real-time Analytics</h3>
+        <p>Process millions of data points per second with AI-driven insights delivered in real time.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Secure by Design</h3>
+        <p>Enterprise-grade security with end-to-end encryption, compliance tools, and zero-trust architecture.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <h3>Global Edge Network</h3>
+        <p>Deploy AI workloads at the edge across 50+ regions for ultra-low latency worldwide.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔗</div>
+        <h3>API-First Platform</h3>
+        <p>Integrate InferiQ into any stack with clean, well-documented REST and GraphQL APIs.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHOWCASE -->
+  <section class="showcase" id="showcase">
+    <div class="section-label">Gallery</div>
+    <h2 class="section-title">AI & Robotics in Action</h2>
+    <p class="section-sub">See how InferiQ powers the next generation of intelligent systems.</p>
+
+    <div class="showcase-grid">
+      <div class="showcase-card large">
+        <img src="https://images.unsplash.com/photo-1555255707-c07966088b7b?w=800&q=80" alt="AI Robot"/>
+        <div class="card-text">
+          <h4>Humanoid Robotics</h4>
+          <p>Advanced AI-powered humanoid systems</p>
+        </div>
+      </div>
+      <div class="showcase-card">
+        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80" alt="Data Analytics"/>
+        <div class="card-text">
+          <h4>AI Analytics Dashboard</h4>
+          <p>Real-time intelligence at scale</p>
+        </div>
+      </div>
+      <div class="showcase-card">
+        <img src="https://images.unsplash.com/photo-1507146153580-69a1fe6d8aa1?w=600&q=80" alt="Neural Network"/>
+        <div class="card-text">
+          <h4>Neural Networks</h4>
+          <p>Deep learning at the frontier</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" id="contact">
+    <div class="orb orb1" style="opacity:0.1;"></div>
+    <div class="cta-box">
+      <h2>Ready to Build with <span style="background:linear-gradient(135deg,#7c3aed,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">InferiQ?</span></h2>
+      <p>Join the waitlist and be among the first to access our AI platform when we launch.</p>
+      <div style="display:flex;gap:0.75rem;max-width:420px;margin:0 auto;flex-wrap:wrap;justify-content:center;">
+        <input type="email" placeholder="Enter your email"
+          style="flex:1;min-width:220px;padding:0.85rem 1.2rem;border-radius:999px;border:1px solid rgba(124,58,237,0.3);background:rgba(255,255,255,0.05);color:#fff;font-size:0.95rem;outline:none;"/>
+        <button class="btn-primary" style="white-space:nowrap;">Join Waitlist</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="logo">InferiQ</div>
+    <p>© 2026 InferiQ. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Contact</a>
+    </div>
+  </footer>
+
+</body>
+</html>
