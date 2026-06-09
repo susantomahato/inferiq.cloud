@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>inferiq.cloud — Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --dark: #0a0a0f;
+      --card: #0f0f1a;
+      --border: rgba(255,255,255,0.08);
+      --text: #e2e8f0;
+      --muted: #64748b;
+      /* AWS Colors */
+      --aws-orange: #FF9900;
+      --aws-s3: #569A31;
+      --aws-cf: #8C4FFF;
+      --aws-r53: #8C4FFF;
+      --aws-acm: #DD344C;
+      --aws-athena: #8C4FFF;
+      /* External */
+      --pagerduty: #06AC38;
+      --google: #4285F4;
+      --namecheap: #DE3723;
+      --github: #6e40c9;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    /* Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .page-header h1 {
+      font-size: 2.2rem; font-weight: 900;
+      background: linear-gradient(135deg, #FF9900, #8C4FFF);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .page-header p { color: var(--muted); font-size: 0.95rem; }
+
+    /* Section title */
+    .section-title {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 1.5rem; text-align: center;
+    }
+
+    /* Flow diagram wrapper */
+    .diagram { margin-bottom: 4rem; }
+
+    /* Service node */
+    .node {
+      border-radius: 16px;
+      padding: 1rem 1.2rem;
+      border: 1px solid var(--border);
+      background: var(--card);
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      min-width: 110px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: default;
+      position: relative;
+    }
+    .node:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+    .node-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+    }
+    .node-label {
+      font-size: 0.75rem; font-weight: 700; color: var(--text);
+      line-height: 1.3;
+    }
+    .node-sub {
+      font-size: 0.65rem; color: var(--muted); line-height: 1.3;
+    }
+    .node-badge {
+      position: absolute; top: -8px; right: -8px;
+      padding: 2px 7px; border-radius: 999px;
+      font-size: 0.6rem; font-weight: 700; color: #fff;
+    }
+
+    /* Arrow */
+    .arrow {
+      display: flex; align-items: center; gap: 0.3rem;
+      color: var(--muted); font-size: 0.65rem;
+      flex-direction: column;
+    }
+    .arrow-line {
+      width: 2px; height: 40px;
+      background: linear-gradient(to bottom, transparent, var(--muted), transparent);
+      position: relative;
+    }
+    .arrow-line::after {
+      content: '▼';
+      position: absolute; bottom: -10px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px; color: var(--muted);
+    }
+    .arrow-h {
+      display: flex; align-items: center; gap: 0; flex-direction: row;
+    }
+    .arrow-h-line {
+      height: 2px; width: 40px;
+      background: linear-gradient(to right, transparent, var(--muted), transparent);
+      position: relative;
+    }
+    .arrow-h-line::after {
+      content: '▶';
+      position: absolute; right: -10px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px; color: var(--muted);
+    }
+    .arrow-label {
+      font-size: 0.6rem; color: var(--muted); white-space: nowrap;
+    }
+
+    /* Flow row */
+    .flow-row {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.5rem; flex-wrap: wrap;
+    }
+    .flow-col {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 0.5rem;
+    }
+
+    /* Group box */
+    .group {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      background: rgba(255,255,255,0.02);
+      position: relative;
+    }
+    .group-label {
+      position: absolute; top: -11px; left: 20px;
+      background: var(--dark);
+      padding: 0 10px;
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+    }
+
+    /* Color helpers */
+    .c-aws    { color: var(--aws-orange); }
+    .c-s3     { color: var(--aws-s3); }
+    .c-cf     { color: var(--aws-cf); }
+    .c-r53    { color: var(--aws-r53); }
+    .c-acm    { color: var(--aws-acm); }
+    .c-pd     { color: var(--pagerduty); }
+    .c-google { color: var(--google); }
+    .c-nc     { color: var(--namecheap); }
+
+    .bg-s3  { background: rgba(86,154,49,0.15); border-color: rgba(86,154,49,0.3); }
+    .bg-cf  { background: rgba(140,79,255,0.15); border-color: rgba(140,79,255,0.3); }
+    .bg-r53 { background: rgba(140,79,255,0.15); border-color: rgba(140,79,255,0.3); }
+    .bg-acm { background: rgba(221,52,76,0.15); border-color: rgba(221,52,76,0.3); }
+    .bg-pd  { background: rgba(6,172,56,0.15); border-color: rgba(6,172,56,0.3); }
+    .bg-google { background: rgba(66,133,244,0.15); border-color: rgba(66,133,244,0.3); }
+    .bg-nc  { background: rgba(222,55,35,0.15); border-color: rgba(222,55,35,0.3); }
+    .bg-aws { background: rgba(255,153,0,0.1); border-color: rgba(255,153,0,0.25); }
+    .bg-athena { background: rgba(140,79,255,0.15); border-color: rgba(140,79,255,0.3); }
+    .bg-github { background: rgba(110,64,201,0.15); border-color: rgba(110,64,201,0.3); }
+    .bg-user { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.15); }
+
+    /* Grid layout for multiple flows */
+    .flows-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    @media (max-width: 900px) { .flows-grid { grid-template-columns: 1fr; } }
+
+    /* Legend */
+    .legend {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+      justify-content: center; margin-bottom: 3rem;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.75rem; color: var(--muted);
+    }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* Cost table */
+    .cost-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .cost-table th {
+      background: rgba(255,153,0,0.1);
+      color: var(--aws-orange);
+      padding: 0.75rem 1rem;
+      text-align: left; font-size: 0.7rem;
+      letter-spacing: 2px; text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+    .cost-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    .cost-table tr:last-child td {
+      font-weight: 700; color: var(--aws-orange);
+      border-bottom: none;
+    }
+    .cost-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .badge-free {
+      background: rgba(6,172,56,0.2); color: #06AC38;
+      padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 600;
+    }
+    .badge-paid {
+      background: rgba(255,153,0,0.15); color: var(--aws-orange);
+      padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 600;
+    }
+    .table-wrap {
+      background: var(--card); border-radius: 16px;
+      border: 1px solid var(--border); overflow: hidden;
+      max-width: 700px; margin: 0 auto;
+    }
+
+    /* animated pulse dot */
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+    .live-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #06AC38;
+      animation: pulse 2s infinite;
+      display: inline-block; margin-right: 4px;
+    }
+
+    /* SVG Icons inline */
+    .icon-aws { font-size: 1.6rem; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="page-header">
+    <h1>inferiq.cloud — System Architecture</h1>
+    <p>End-to-end infrastructure, alerting, and analytics pipeline</p>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#FF9900"></div> AWS Services</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#569A31"></div> Storage (S3)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#8C4FFF"></div> Network / CDN</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#DD344C"></div> Security (ACM)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#06AC38"></div> PagerDuty</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#4285F4"></div> Google</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#DE3723"></div> Namecheap</div>
+  </div>
+
+  <!-- ── FLOW 1: Website Request ── -->
+  <div class="diagram">
+    <div class="section-title">① Website Request Flow</div>
+    <div class="flow-row">
+
+      <!-- User -->
+      <div class="flow-col">
+        <div class="node bg-user">
+          <div class="node-icon" style="background:rgba(255,255,255,0.05)">🌐</div>
+          <div class="node-label">Client Browser</div>
+          <div class="node-sub">https://inferiq.cloud</div>
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <div class="arrow arrow-h">
+        <div class="arrow-h-line"></div>
+        <div class="arrow-label" style="position:absolute;margin-top:-16px;font-size:0.6rem;color:#64748b">DNS lookup</div>
+      </div>
+
+      <!-- Route 53 -->
+      <div class="flow-col">
+        <div class="node bg-r53">
+          <div class="node-icon" style="background:rgba(140,79,255,0.2)">
+            <svg width="28" height="28" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="38" fill="#8C4FFF" opacity="0.3"/><circle cx="40" cy="40" r="20" fill="#8C4FFF"/><circle cx="40" cy="40" r="8" fill="white"/></svg>
+          </div>
+          <div class="node-label c-cf">Route 53</div>
+          <div class="node-sub">DNS Resolution<br/>A ALIAS Record</div>
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <div class="arrow arrow-h" style="position:relative">
+        <div class="arrow-h-line"></div>
+      </div>
+
+      <!-- CloudFront -->
+      <div class="flow-col">
+        <div class="node bg-cf">
+          <div class="node-badge" style="background:#8C4FFF">HTTPS</div>
+          <div class="node-icon" style="background:rgba(140,79,255,0.2)">
+            <svg width="28" height="28" viewBox="0 0 80 80" fill="none"><polygon points="40,5 75,65 5,65" fill="#8C4FFF" opacity="0.4"/><polygon points="40,15 68,62 12,62" fill="#8C4FFF"/><rect x="34" y="38" width="12" height="20" fill="white"/><rect x="28" y="28" width="24" height="12" fill="white"/></svg>
+          </div>
+          <div class="node-label c-cf">CloudFront</div>
+          <div class="node-sub">CDN + TLS<br/>E2DZJWSPK3DAQH</div>
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <div class="arrow arrow-h">
+        <div class="arrow-h-line"></div>
+      </div>
+
+      <!-- S3 -->
+      <div class="flow-col">
+        <div class="node bg-s3">
+          <div class="node-icon" style="background:rgba(86,154,49,0.2)">
+            <svg width="28" height="28" viewBox="0 0 80 80" fill="none"><ellipse cx="40" cy="18" rx="30" ry="10" fill="#569A31"/><path d="M10 18 Q10 70 40 70 Q70 70 70 18" fill="#3d7a22"/><ellipse cx="40" cy="18" rx="30" ry="10" fill="#569A31" opacity="0.7"/><ellipse cx="40" cy="36" rx="30" ry="8" fill="#569A31" opacity="0.5"/><ellipse cx="40" cy="54" rx="30" ry="8" fill="#569A31" opacity="0.3"/></svg>
+          </div>
+          <div class="node-label c-s3">S3 Bucket</div>
+          <div class="node-sub">Static Website<br/>us-east-2</div>
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <div class="arrow arrow-h">
+        <div class="arrow-h-line"></div>
+      </div>
+
+      <!-- ACM -->
+      <div class="flow-col">
+        <div class="node bg-acm">
+          <div class="node-icon" style="background:rgba(221,52,76,0.2)">
+            <svg width="28" height="28" viewBox="0 0 80 80" fill="none"><rect x="15" y="30" width="50" height="38" rx="6" fill="#DD344C" opacity="0.4"/><rect x="20" y="35" width="40" height="28" rx="4" fill="#DD344C"/><path d="M28 12 C28 5 52 5 52 12 L52 32 L28 32 Z" fill="#DD344C" opacity="0.6"/><circle cx="40" cy="48" r="6" fill="white"/><rect x="38" y="52" width="4" height="8" fill="white"/></svg>
+          </div>
+          <div class="node-label c-acm">ACM</div>
+          <div class="node-sub">SSL Certificate<br/>us-east-1</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── FLOWS GRID ── -->
+  <div class="flows-grid">
+
+    <!-- ── FLOW 2: Email System ── -->
+    <div class="diagram">
+      <div class="section-title">② Email Flow</div>
+      <div class="flow-col" style="align-items:center">
+
+        <div class="node bg-user">
+          <div class="node-icon" style="background:rgba(255,255,255,0.05)">✉️</div>
+          <div class="node-label">External Sender</div>
+          <div class="node-sub">*@inferiq.cloud</div>
+        </div>
+
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-label">MX lookup</div></div>
+
+        <div class="node bg-r53">
+          <div class="node-icon" style="background:rgba(140,79,255,0.2)">
+            <svg width="28" height="28" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="38" fill="#8C4FFF" opacity="0.3"/><circle cx="40" cy="40" r="20" fill="#8C4FFF"/><circle cx="40" cy="40" r="8" fill="white"/></svg>
+          </div>
+          <div class="node-label c-cf">Route 53</div>
+          <div class="node-sub">MX + SPF Records</div>
+        </div>
+
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-label">Routes to mail server</div></div>
+
+        <div class="node bg-nc">
+          <div class="node-icon" style="background:rgba(222,55,35,0.2)">📧</div>
+          <div class="node-label c-nc">Namecheap</div>
+          <div class="node-sub">Private Email<br/>mx1/mx2.privateemail.com</div>
+        </div>
+
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-label">Delivered to inbox</div></div>
+
+        <div class="node bg-nc" style="min-width:200px">
+          <div class="node-icon" style="background:rgba(222,55,35,0.15)">📬</div>
+          <div class="node-label c-nc">Mailboxes</div>
+          <div class="node-sub">
+            susanto@inferiq.cloud<br/>
+            dalima@inferiq.cloud<br/>
+            pankaj@inferiq.cloud
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── FLOW 3: Alert Pipeline ── -->
+    <div class="diagram">
+      <div class="section-title">③ Email Alert Pipeline</div>
+      <div class="flow-col" style="align-items:center">
+
+        <div class="node bg-google">
+          <div class="node-icon" style="background:rgba(66,133,244,0.2)">📩</div>
+          <div class="node-label c-google">Gmail Inbox</div>
+          <div class="node-sub">Alert email arrives</div>
+        </div>
+
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-label">Polls every 1 min</div></div>
+
+        <div class="node bg-google">
+          <div class="node-icon" style="background:rgba(66,133,244,0.2)">⚙️</div>
+          <div class="node-label c-google">Google Apps Script</div>
+          <div class="node-sub">checkGmailAndAlert()<br/>Time-driven trigger</div>
+        </div>
+
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-label">POST /v2/enqueue</div></div>
+
+        <div class="node bg-pd">
+          <div class="node-icon" style="background:rgba(6,172,56,0.2)">🚨</div>
+          <div class="node-label c-pd">PagerDuty</div>
+          <div class="node-sub">H1B Visa Alerts Service<br/>Events API v2</div>
+        </div>
+
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-label">Push / SMS / Call</div></div>
+
+        <div class="node bg-pd" style="min-width:200px">
+          <div class="node-icon" style="background:rgba(6,172,56,0.15)">👥</div>
+          <div class="node-label c-pd">Responders</div>
+          <div class="node-sub">
+            <span class="live-dot"></span>Susanto (Owner)<br/>
+            <span class="live-dot"></span>Dalima (Responder)<br/>
+            <span class="live-dot"></span>Pankaj (Responder)
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── FLOW 4: Analytics ── -->
+  <div class="diagram">
+    <div class="section-title">④ Analytics Pipeline</div>
+    <div class="flow-row">
+
+      <div class="flow-col">
+        <div class="node bg-user">
+          <div class="node-icon" style="background:rgba(255,255,255,0.05)">🌐</div>
+          <div class="node-label">Client Request</div>
+          <div class="node-sub">Any page visit</div>
+        </div>
+      </div>
+
+      <div class="arrow arrow-h"><div class="arrow-h-line"></div></div>
+
+      <div class="flow-col">
+        <div class="node bg-cf">
+          <div class="node-icon" style="background:rgba(140,79,255,0.2)">
+            <svg width="28" height="28" viewBox="0 0 80 80" fill="none"><polygon points="40,5 75,65 5,65" fill="#8C4FFF" opacity="0.4"/><polygon points="40,15 68,62 12,62" fill="#8C4FFF"/><rect x="34" y="38" width="12" height="20" fill="white"/><rect x="28" y="28" width="24" height="12" fill="white"/></svg>
+          </div>
+          <div class="node-label c-cf">CloudFront</div>
+          <div class="node-sub">Logs: IP, Country<br/>Status, Bytes, UA</div>
+        </div>
+      </div>
+
+      <div class="arrow arrow-h">
+        <div class="arrow-h-line"></div>
+        <div class="arrow-label" style="position:absolute;margin-top:-16px;font-size:0.6rem;color:#64748b">~15 min batch</div>
+      </div>
+
+      <div class="flow-col">
+        <div class="node bg-s3">
+          <div class="node-icon" style="background:rgba(86,154,49,0.2)">
+            <svg width="28" height="28" viewBox="0 0 80 80" fill="none"><ellipse cx="40" cy="18" rx="30" ry="10" fill="#569A31"/><path d="M10 18 Q10 70 40 70 Q70 70 70 18" fill="#3d7a22"/><ellipse cx="40" cy="18" rx="30" ry="10" fill="#569A31" opacity="0.7"/></svg>
+          </div>
+          <div class="node-label c-s3">S3 Logs Bucket</div>
+          <div class="node-sub">inferiq-cloud-logs<br/>cf-logs/</div>
+        </div>
+      </div>
+
+      <div class="arrow arrow-h"><div class="arrow-h-line"></div></div>
+
+      <div class="flow-col">
+        <div class="node bg-athena">
+          <div class="node-icon" style="background:rgba(140,79,255,0.2)">🔍</div>
+          <div class="node-label c-cf">Athena</div>
+          <div class="node-sub">inferiq_analytics<br/>cloudfront_logs table</div>
+        </div>
+      </div>
+
+      <div class="arrow arrow-h"><div class="arrow-h-line"></div></div>
+
+      <div class="flow-col">
+        <div class="node bg-aws">
+          <div class="node-icon" style="background:rgba(255,153,0,0.15)">📊</div>
+          <div class="node-label c-aws">Insights</div>
+          <div class="node-sub">Hits · IPs · Countries<br/>Status codes · Pages</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── FLOW 5: Deployment ── -->
+  <div class="diagram">
+    <div class="section-title">⑤ Deployment Flow</div>
+    <div class="flow-row">
+
+      <div class="flow-col">
+        <div class="node bg-user">
+          <div class="node-icon" style="background:rgba(255,255,255,0.05)">💻</div>
+          <div class="node-label">Developer</div>
+          <div class="node-sub">Local changes</div>
+        </div>
+      </div>
+
+      <div class="arrow arrow-h"><div class="arrow-h-line"></div></div>
+
+      <div class="flow-col">
+        <div class="node bg-github">
+          <div class="node-icon" style="background:rgba(110,64,201,0.2)">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="#6e40c9"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.21.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.49 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02.01 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.31 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          </div>
+          <div class="node-label" style="color:#a78bfa">GitHub</div>
+          <div class="node-sub">susantomahato/<br/>inferiq.cloud</div>
+        </div>
+      </div>
+
+      <div class="arrow arrow-h"><div class="arrow-h-line"></div></div>
+
+      <div class="flow-col">
+        <div class="node bg-s3">
+          <div class="node-icon" style="background:rgba(86,154,49,0.2)">
+            <svg width="28" height="28" viewBox="0 0 80 80" fill="none"><ellipse cx="40" cy="18" rx="30" ry="10" fill="#569A31"/><path d="M10 18 Q10 70 40 70 Q70 70 70 18" fill="#3d7a22"/><ellipse cx="40" cy="18" rx="30" ry="10" fill="#569A31" opacity="0.7"/></svg>
+          </div>
+          <div class="node-label c-s3">aws s3 sync</div>
+          <div class="node-sub">Upload to S3<br/>inferiq.cloud</div>
+        </div>
+      </div>
+
+      <div class="arrow arrow-h"><div class="arrow-h-line"></div></div>
+
+      <div class="flow-col">
+        <div class="node bg-cf">
+          <div class="node-icon" style="background:rgba(140,79,255,0.2)">♻️</div>
+          <div class="node-label c-cf">Cache Invalidation</div>
+          <div class="node-sub">CloudFront /*<br/>~2 min propagation</div>
+        </div>
+      </div>
+
+      <div class="arrow arrow-h"><div class="arrow-h-line"></div></div>
+
+      <div class="flow-col">
+        <div class="node bg-user">
+          <div class="node-icon" style="background:rgba(6,172,56,0.15)">✅</div>
+          <div class="node-label" style="color:#06AC38">Live</div>
+          <div class="node-sub">https://inferiq.cloud</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Cost Table ── -->
+  <div class="diagram">
+    <div class="section-title">⑥ Monthly Cost Estimate</div>
+    <div class="table-wrap">
+      <table class="cost-table">
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Provider</th>
+            <th>Purpose</th>
+            <th>Cost/month</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Route 53</td>
+            <td><span style="color:#FF9900">AWS</span></td>
+            <td>DNS + MX + ACM validation</td>
+            <td><span class="badge-paid">$0.50</span></td>
+          </tr>
+          <tr>
+            <td>CloudFront</td>
+            <td><span style="color:#FF9900">AWS</span></td>
+            <td>CDN + HTTPS</td>
+            <td><span class="badge-free">~$0.00</span></td>
+          </tr>
+          <tr>
+            <td>S3 (website)</td>
+            <td><span style="color:#FF9900">AWS</span></td>
+            <td>Static file hosting</td>
+            <td><span class="badge-free">~$0.00</span></td>
+          </tr>
+          <tr>
+            <td>S3 (logs)</td>
+            <td><span style="color:#FF9900">AWS</span></td>
+            <td>CloudFront access logs</td>
+            <td><span class="badge-free">~$0.01</span></td>
+          </tr>
+          <tr>
+            <td>Athena</td>
+            <td><span style="color:#FF9900">AWS</span></td>
+            <td>Log analytics queries</td>
+            <td><span class="badge-free">~$0.00</span></td>
+          </tr>
+          <tr>
+            <td>ACM Certificate</td>
+            <td><span style="color:#FF9900">AWS</span></td>
+            <td>SSL/TLS</td>
+            <td><span class="badge-free">Free</span></td>
+          </tr>
+          <tr>
+            <td>Private Email</td>
+            <td><span style="color:#DE3723">Namecheap</span></td>
+            <td>@inferiq.cloud mailboxes</td>
+            <td><span class="badge-paid">$1.24</span></td>
+          </tr>
+          <tr>
+            <td>Apps Script</td>
+            <td><span style="color:#4285F4">Google</span></td>
+            <td>Gmail → PagerDuty monitor</td>
+            <td><span class="badge-free">Free</span></td>
+          </tr>
+          <tr>
+            <td>PagerDuty</td>
+            <td><span style="color:#06AC38">PagerDuty</span></td>
+            <td>Incident alerting</td>
+            <td><span class="badge-paid">TBD</span></td>
+          </tr>
+          <tr>
+            <td colspan="3"><strong>Estimated Total</strong></td>
+            <td><strong>~$2.00/mo</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="text-align:center;color:var(--muted);font-size:0.75rem;padding-bottom:2rem">
+    inferiq.cloud architecture — generated June 2026
+  </div>
+
+</body>
+</html>
